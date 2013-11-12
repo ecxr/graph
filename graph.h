@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <cmath>
 
+#include "util.h"
+
 using namespace std;
 
 //template <class NodeValue>
@@ -16,6 +18,7 @@ class Graph
   typedef vector<vector<double>> WeightList;
 
   public:
+    // Create an empty Graph on n vertices
     Graph(int n) {
       vCount = n;
       eCount = 0;
@@ -24,6 +27,28 @@ class Graph
       weights.resize(n);
     }
 
+    // Create a randomized graph with the given properties
+    Graph(int size, double density, double low, double high)
+    {
+      vCount = size;
+      eCount = 0;
+      adj.resize(vCount);
+      weights.resize(vCount);
+
+      for (int i = 0; i < vCount; i++)
+      {
+        for (int j = 0; j < i; j++)
+        {
+          if (prob() < density)
+          {
+            double weight = low + (prob() * (high - low));
+            addEdge(i, j, weight);
+          }
+        }
+      }
+    }
+
+    // Read graph from a file
     Graph(const char* filename)
     {
       int u, v;

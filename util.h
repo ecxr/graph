@@ -6,4 +6,6 @@
 
 using namespace std;
 
+double prob(void);
+
 #endif // _UTIL_H
