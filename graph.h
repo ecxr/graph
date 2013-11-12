@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 
 using namespace std;
 
@@ -23,7 +24,7 @@ class Graph
       weights.resize(n);
     }
 
-    Graph(char* filename)
+    Graph(const char* filename)
     {
       int u, v;
       double weight;
@@ -66,13 +67,71 @@ class Graph
       eCount++;
     }
 
+    double getEdgeWeight(int u,int v) {
+      for (unsigned int i = 0; i < adj[u].size(); i++) {
+        if (adj[u][i] == v) {
+          return weights[u][i];
+        }
+      }
+      return INFINITY;
+    }
+
+    void setEdgeWeight(int u, int v, double w) {
+      int found = 0;
+
+      for (unsigned int i = 0; i < adj[u].size(); i++) {
+        if (adj[u][i] == v) {
+          weights[u][i] = w;
+          found++;
+          break;
+        }
+      }
+
+      for (unsigned int i = 0; i < adj[v].size(); i++) {
+        if (adj[v][i] == u) {
+          weights[v][i] = w;
+          found++;
+          break;
+        }
+      }
+
+      if (found == 0) addEdge(u, v, w);
+      if (found == 1) cout << "HISSY FIT, SOMETHING'S WRONG IN SETEDGEWEIGHTTOWN";
+    }
+
+    void delEdge(int u,int v) {
+      int found = 0;
+
+      for (unsigned int i = 0; i < adj[u].size(); i++) {
+        if (adj[u][i] == v) {
+          adj[u].erase(adj[u].begin() + i);
+          weights[u].erase(weights[u].begin() + i);
+          found++;
+          break;
+        }
+      }
+      for (unsigned int i = 0; i < adj[v].size(); i++) {
+        if (adj[v][i] == u) {
+          adj[v].erase(adj[v].begin() + i);
+          weights[v].erase(weights[v].begin() + i);
+          found++;
+          break;
+        }
+      }
+      if (found == 2) eCount--;
+      if (found == 1) cout << "HISSY FIT, SOMETHING'S WRONG IN DELEDGETOWN";
+    }
+    
+    int edges() { return eCount; }
+    int vertices() { return vCount; }
+
     friend ostream& operator<<(ostream& out, Graph g)
     {
       out << "Graph has " << g.vCount << " vertices, and " << g.eCount << " edges" << endl;
       for (int i = 0; i < g.vCount; i++) {
         vector<int> edges = g.adj[i];
         out << i << ": ";
-        for (int j = 0; j < edges.size(); j++) {
+        for (unsigned int j = 0; j < edges.size(); j++) {
           out << edges[j] << " (" << g.weights[i][j] << "), ";
         }
         out << endl;
