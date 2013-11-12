@@ -2,6 +2,7 @@
 #define _GRAPH_H
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <algorithm>
 
@@ -20,6 +21,29 @@ class Graph
 
       adj.resize(n);
       weights.resize(n);
+    }
+
+    Graph(char* filename)
+    {
+      int u, v;
+      double weight;
+
+      ifstream file(filename);
+      if (!file.is_open()) {
+        cout << "Unable to open file" << endl;
+        // throw exception
+        return;
+      }
+
+      file >> vCount;
+
+      adj.resize(vCount);
+      weights.resize(vCount);
+
+      while  (file >> u >> v >> weight)
+      {
+        addEdge(u, v, weight);
+      }
     }
 
     void addEdge(int u, int v, double weight) {
@@ -44,7 +68,15 @@ class Graph
 
     friend ostream& operator<<(ostream& out, Graph g)
     {
-      cout << "(" << g.vCount << "," << g.eCount << ")";
+      out << "Graph has " << g.vCount << " vertices, and " << g.eCount << " edges" << endl;
+      for (int i = 0; i < g.vCount; i++) {
+        vector<int> edges = g.adj[i];
+        out << i << ": ";
+        for (int j = 0; j < edges.size(); j++) {
+          out << edges[j] << " (" << g.weights[i][j] << "), ";
+        }
+        out << endl;
+      }
       return out;
     }
 
